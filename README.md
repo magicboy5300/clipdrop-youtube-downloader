@@ -2,6 +2,8 @@
 
 ClipDrop 是一个在 macOS 本机运行的 YouTube 视频下载器。打开网页界面，粘贴视频链接，即可查看视频信息、选择可用画质，并保存为视频或 MP3 音频。
 
+![ClipDrop 主界面](assets/clipdrop-main-interface.png)
+
 下载服务只监听 `127.0.0.1`，不会把下载任务或 Chrome 登录信息发送到本项目的服务器。程序使用 [yt-dlp](https://github.com/yt-dlp/yt-dlp) 解析视频；YouTube 的访问规则和解析方式可能变化，因此某些视频仍可能无法读取或下载。
 
 ## 功能
