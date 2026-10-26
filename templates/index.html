@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f7">
+  <title>视频下载器</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="视频下载器首页">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>CLIP<span class="brand-light">DROP</span></span>
+      </a>
+      <span class="local-badge"><span class="online-dot"></span> 本机运行</span>
+    </header>
+
+    <section class="intro">
+      <div class="eyebrow"><span class="eyebrow-line"></span> SIMPLE VIDEO DOWNLOADER</div>
+      <h1>喜欢的视频，<br><span>留在你的设备里。</span></h1>
+      <p>粘贴 YouTube 链接，轻松保存到电脑。</p>
+    </section>
+
+    <section class="download-card" aria-labelledby="form-title">
+      <div class="card-heading">
+        <div>
+          <div class="step-label">STEP 01 <span>·</span> VIDEO LINK</div>
+          <h2 id="form-title">添加视频链接</h2>
+        </div>
+        <div class="link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M10.6 13.4a4.1 4.1 0 0 0 5.8 0l3-3a4.1 4.1 0 0 0-5.8-5.8l-1.7 1.7M13.4 10.6a4.1 4.1 0 0 0-5.8 0l-3 3a4.1 4.1 0 0 0 5.8 5.8l1.7-1.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <label class="field-label" for="video-url">视频网址</label>
+      <div class="input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.6 13.4a4.1 4.1 0 0 0 5.8 0l3-3a4.1 4.1 0 0 0-5.8-5.8l-1.7 1.7M13.4 10.6a4.1 4.1 0 0 0-5.8 0l-3 3a4.1 4.1 0 0 0 5.8 5.8l1.7-1.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <input id="video-url" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="url">
+        <button id="paste-button" class="paste-button" type="button">粘贴</button>
+      </div>
+
+      <label class="cookie-consent" for="use-browser-cookies">
+        <input id="use-browser-cookies" type="checkbox">
+        <span class="cookie-checkmark" aria-hidden="true"></span>
+        <span class="cookie-label-copy"><strong>使用 Chrome Cookie 用于 YouTube 验证</strong><small>默认关闭；只有 YouTube 要求登录验证时再启用，受 macOS 权限限制时可继续尝试无 Cookie 访问</small></span>
+      </label>
+      <div class="profile-config">
+        <span id="chrome-profile-path" class="profile-path" data-profile-path="{{ chrome_profile_path }}">{{ chrome_profile }}</span>
+        <button id="profile-button" class="profile-button" type="button">选择 Chrome 配置</button>
+      </div>
+
+      <div class="environment-status" aria-live="polite">
+        <div><span class="environment-label">下载环境</span><span id="environment-detail">正在检测…</span></div>
+        <button id="update-button" class="profile-button" type="button">更新 yt-dlp</button>
+      </div>
+
+      <div id="video-summary" class="video-summary" hidden>
+        <span class="summary-dot"></span>
+        <span id="video-title" class="video-title"></span>
+        <span id="video-duration" class="video-duration"></span>
+      </div>
+
+      <section id="format-options" class="format-options" hidden aria-label="下载格式">
+        <label class="field-label">下载格式</label>
+        <div class="format-switch" role="group" aria-label="选择下载格式">
+          <button class="format-choice selected" type="button" data-mode="video" aria-pressed="true">
+            <svg class="choice-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor"/></svg><span>视频</span>
+          </button>
+          <button class="format-choice" type="button" data-mode="mp3" aria-pressed="false">
+            <svg class="choice-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 18V5l10-2v13M10 8l10-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="7" cy="18.5" rx="3" ry="2.5" fill="currentColor"/><ellipse cx="17" cy="16.5" rx="3" ry="2.5" fill="currentColor"/></svg><span>MP3 音频</span>
+          </button>
+        </div>
+
+        <div id="resolution-row" class="resolution-row">
+          <label class="field-label" for="resolution-select">视频清晰度</label>
+          <select id="resolution-select"></select>
+          <span class="field-hint">清晰度来自该视频实际提供的格式</span>
+        </div>
+        <div id="mp3-note" class="mp3-note" hidden>
+          将提取视频音轨并转换为 MP3 高音质格式。
+        </div>
+      </section>
+
+      <div class="save-location">
+        <div class="folder-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3.5 7.5A2.5 2.5 0 0 1 6 5h4l2 2h6a2.5 2.5 0 0 1 2.5 2.5v8A2.5 2.5 0 0 1 18 20H6a2.5 2.5 0 0 1-2.5-2.5v-10Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+        <div class="location-copy"><span class="location-label">保存位置</span><span class="location-path">{{ download_dir }}</span></div>
+        <button id="open-folder-button" class="folder-button" type="button">打开</button>
+        <button id="folder-button" class="folder-button" type="button">更改</button>
+      </div>
+
+      <div id="progress-area" class="progress-area" hidden>
+        <div class="progress-meta"><span id="status-label">准备中</span><span id="percent-label">0%</span></div>
+        <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+        <div id="detail-label" class="detail-label"></div>
+        <button id="cancel-button" class="cancel-button" type="button" hidden>取消下载</button>
+      </div>
+
+      <button id="download-button" class="download-button" type="button" disabled>
+        <span>开始下载</span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <p class="footnote">仅下载你有权保存的内容。下载内容请遵守 YouTube 服务条款及相关版权规定。</p>
+    </section>
+
+    <section id="history-area" class="history-area" hidden aria-labelledby="history-title">
+      <div class="history-heading"><div><div class="step-label">RECENT ACTIVITY</div><h2 id="history-title">下载记录</h2></div><button id="clear-history-button" class="profile-button" type="button">清空记录</button></div>
+      <div id="history-list" class="history-list"></div>
+    </section>
+
+    <footer class="page-footer"><span>CLIPDROP</span><span>为离线观看而设计</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
